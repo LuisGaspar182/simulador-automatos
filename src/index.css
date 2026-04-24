@@ -1,0 +1,52 @@
+:root {
+  --cor-texto: #1a1a1a;
+  --cor-texto-secundario: #4a4a4a;
+  --cor-cabecalho: #f0f0f0;
+  --cor-borda: #d0d0d0;
+  --cor-cartao: #f8f8f8;
+  --cor-hover: #e8e8e8;
+  --cor-destaque: #333;
+
+  font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--cor-texto);
+  background-color: #fff;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+a {
+  color: inherit;
+}
+
+h1, h2, h3, h4 {
+  margin: 0;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+p {
+  margin: 0;
+}
+
+ol, ul {
+  margin: 0;
+}

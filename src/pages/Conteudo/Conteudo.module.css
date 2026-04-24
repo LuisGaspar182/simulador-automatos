@@ -1,0 +1,53 @@
+.pagina {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  padding: 2.5rem 1rem;
+}
+
+.artigo {
+  width: 100%;
+  max-width: 780px;
+}
+
+.tituloPrincipal {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  color: var(--cor-texto);
+  border-bottom: 2px solid var(--cor-borda);
+  padding-bottom: 0.5rem;
+}
+
+.secao {
+  margin-bottom: 2.5rem;
+}
+
+.secao h2 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  color: var(--cor-texto);
+}
+
+.secao h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+  color: var(--cor-texto);
+}
+
+.secao p {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: var(--cor-texto-secundario);
+  margin-bottom: 0.75rem;
+}
+
+.secao ol {
+  padding-left: 1.5rem;
+  font-size: 0.9rem;
+  line-height: 1.8;
+  color: var(--cor-texto-secundario);
+}

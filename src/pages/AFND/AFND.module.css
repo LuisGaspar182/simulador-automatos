@@ -1,0 +1,29 @@
+.pagina {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 1.25rem 1.5rem;
+  gap: 1rem;
+  min-height: 0;
+}
+
+.titulo {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--cor-texto);
+}
+
+.area {
+  flex: 1;
+  display: flex;
+  gap: 1rem;
+  min-height: 0;
+}
+
+.colunaPrincipal {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-width: 0;
+}

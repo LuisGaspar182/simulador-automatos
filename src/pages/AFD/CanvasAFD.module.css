@@ -1,0 +1,7 @@
+.container {
+  border: 1px solid var(--cor-borda);
+  border-radius: 4px;
+  background: #fff;
+  overflow: hidden;
+  position: relative;
+}

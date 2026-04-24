@@ -1,0 +1,12 @@
+.footer {
+  padding: 0.6rem 2rem;
+  background-color: var(--cor-cabecalho);
+  border-top: 1px solid var(--cor-borda);
+  text-align: center;
+}
+
+.footer p {
+  font-size: 0.75rem;
+  color: var(--cor-texto-secundario);
+  margin: 0;
+}
