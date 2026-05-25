@@ -4,6 +4,7 @@ import {
   pontoNaBorda,
   calcularCurvaBezier,
   pontosSelfLoop,
+  curvaturaNecessaria,
 } from '../../utils/canvasGeometry'
 import styles from './CanvasAFND.module.css'
 
@@ -120,7 +121,12 @@ export default function CanvasAFND({
             const temDireto = Object.values(afnd.transicoes[origem] ?? {}).flat().includes(destino)
             const temInverso = Object.values(afnd.transicoes[destino] ?? {}).flat().includes(origem)
             const bidir = origem !== destino && temDireto && temInverso
-            const curvatura = bidir ? 45 : 0
+            const outrasPos = afnd.estados
+              .filter(e => e !== origem && e !== destino)
+              .map(e => layout[e])
+              .filter(Boolean)
+            const desvio = curvaturaNecessaria(posOrigem, posDestino, outrasPos, RAIO)
+            const curvatura = bidir ? 45 : desvio
 
             if (curvatura === 0) {
               const inicio = pontoNaBorda(posDestino, posOrigem, RAIO)

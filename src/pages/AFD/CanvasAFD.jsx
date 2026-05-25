@@ -5,6 +5,7 @@ import {
   calcularCurvaBezier,
   pontosSelfLoop,
   ehBidirecional,
+  curvaturaNecessaria,
 } from '../../utils/canvasGeometry'
 import styles from './CanvasAFD.module.css'
 
@@ -117,7 +118,12 @@ export default function CanvasAFD({
             }
 
             const bidir = ehBidirecional(afd, origem, destino)
-            const curvatura = bidir ? 45 : 0
+            const outrasPos = afd.estados
+              .filter(e => e !== origem && e !== destino)
+              .map(e => layout[e])
+              .filter(Boolean)
+            const desvio = curvaturaNecessaria(posOrigem, posDestino, outrasPos, RAIO)
+            const curvatura = bidir ? 45 : desvio
 
             if (curvatura === 0) {
               const inicio = pontoNaBorda(posDestino, posOrigem, RAIO)
