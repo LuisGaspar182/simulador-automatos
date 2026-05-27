@@ -149,7 +149,7 @@ export default function CanvasAPD({
                   />
                   <Text
                     x={mx - 45}
-                    y={my - 10 - (linhas - 1) * 6}
+                    y={my + 6}
                     width={90}
                     align="center"
                     text={rotulo}

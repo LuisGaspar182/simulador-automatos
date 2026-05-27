@@ -142,7 +142,7 @@ export default function CanvasAFD({
                   />
                   <Text
                     x={mx - 14}
-                    y={my - 18}
+                    y={my + 5}
                     width={28}
                     align="center"
                     text={rotulo}
