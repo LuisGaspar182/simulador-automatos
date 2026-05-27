@@ -21,6 +21,7 @@ export default function PainelEdicaoAFD({
   setModo,
   setLayout,
   onResetSimulacao,
+  onRemoverTransicao,
 }) {
   const [exampleSelecionado, setExampleSelecionado] = useState('terminaEm01')
 
@@ -67,6 +68,19 @@ export default function PainelEdicaoAFD({
 
   function handleDefinirInicial(estado) {
     setAfd(prev => ({ ...prev, estadoInicial: estado }))
+  }
+
+  // Monta a lista de todas as transições para exibição no painel
+  // Formato: δ(origem, símbolo) = destino
+  const todasTransicoes = []
+  for (const [origem, trans] of Object.entries(afd.transicoes)) {
+    for (const [simbolo, destino] of Object.entries(trans)) {
+      todasTransicoes.push({
+        origem,
+        simbolo,
+        rotulo: `δ(${origem},${simbolo})=${destino}`,
+      })
+    }
   }
 
   return (
@@ -132,6 +146,29 @@ export default function PainelEdicaoAFD({
           placeholder="ex: 0, 1"
         />
         <div className={styles.dica}>Símbolos separados por vírgula</div>
+      </div>
+
+      {/* Lista de transições com opção de remoção individual */}
+      <div className={styles.secao}>
+        <div className={styles.secaoTitulo}>Transições</div>
+        <div className={styles.listaTransicoes}>
+          {todasTransicoes.length === 0 ? (
+            <span className={styles.semEstados}>Nenhuma transição</span>
+          ) : (
+            todasTransicoes.map(({ origem, simbolo, rotulo }) => (
+              <div key={`${origem}-${simbolo}`} className={styles.itemTransicao}>
+                <span className={styles.rotuloTransicao}>{rotulo}</span>
+                <button
+                  className={styles.botaoRemover}
+                  onClick={() => onRemoverTransicao(origem, simbolo)}
+                  title="Remover esta transição"
+                >
+                  ×
+                </button>
+              </div>
+            ))
+          )}
+        </div>
       </div>
 
       {/* Exemplos */}

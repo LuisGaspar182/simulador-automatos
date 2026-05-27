@@ -125,6 +125,22 @@ export default function AFND() {
     }
   }, [modo, afnd])
 
+  const handleRemoverTransicao = useCallback((origem, simbolo) => {
+    setAfnd(prev => {
+      const novasTransicoes = { ...prev.transicoes }
+      if (novasTransicoes[origem]) {
+        const trans = { ...novasTransicoes[origem] }
+        delete trans[simbolo]
+        if (Object.keys(trans).length > 0) {
+          novasTransicoes[origem] = trans
+        } else {
+          delete novasTransicoes[origem]
+        }
+      }
+      return { ...prev, transicoes: novasTransicoes }
+    })
+  }, [])
+
   const handleDuploCliqueEstado = useCallback((estado) => {
     setAfnd(prev => {
       const eFinal = prev.estadosFinais.includes(estado)
@@ -178,6 +194,7 @@ export default function AFND() {
             layout={layout}
             setLayout={setLayout}
             onResetSimulacao={reset}
+            onRemoverTransicao={handleRemoverTransicao}
           />
         </div>
       </div>
