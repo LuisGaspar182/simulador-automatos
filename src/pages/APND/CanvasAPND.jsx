@@ -6,7 +6,7 @@ import {
   pontosSelfLoop,
   curvaturaNecessaria,
 } from '../../utils/canvasGeometry'
-import styles from './CanvasAFND.module.css'
+import styles from './CanvasAPND.module.css'
 
 const RAIO = 30
 
@@ -26,23 +26,26 @@ const CURSORES = {
   removerEstado: 'pointer',
 }
 
-// Agrupa as transições por par (origem, destino), consolidando os símbolos de cada aresta
-function agruparArestas(afnd) {
+// Agrupa arestas por par (origem, destino) — itera sobre arrays de resultados
+function agruparArestas(apnd) {
   const mapa = {}
-  for (const [origem, trans] of Object.entries(afnd.transicoes)) {
-    for (const [simbolo, destinos] of Object.entries(trans)) {
-      for (const destino of destinos) {
-        const chave = `${origem}|${destino}`
-        if (!mapa[chave]) mapa[chave] = { origem, destino, simbolos: [] }
-        mapa[chave].simbolos.push(simbolo)
+  for (const [origem, trans] of Object.entries(apnd.transicoes)) {
+    for (const [chave, resultados] of Object.entries(trans)) {
+      for (const resultado of resultados) {
+        const destino = resultado.estado
+        const k = `${origem}|${destino}`
+        if (!mapa[k]) mapa[k] = { origem, destino, rotulos: [] }
+        const [simbolo, topo] = chave.split(',')
+        const emp = resultado.empilhar === '' ? 'ε' : resultado.empilhar
+        mapa[k].rotulos.push(`${simbolo},${topo}/${emp}`)
       }
     }
   }
   return Object.values(mapa)
 }
 
-export default function CanvasAFND({
-  afnd,
+export default function CanvasAPND({
+  apnd,
   layout,
   estadosAtivos,
   modo,
@@ -164,7 +167,7 @@ export default function CanvasAFND({
     onClicarVazio(toCanvas(pos.x, pos.y))
   }
 
-  const arestas = agruparArestas(afnd)
+  const arestas = agruparArestas(apnd)
 
   return (
     <div
@@ -196,17 +199,18 @@ export default function CanvasAFND({
         <Layer>
           <Group x={viewport.x} y={viewport.y} scaleX={viewport.scale} scaleY={viewport.scale}>
             {/* Arestas */}
-            {arestas.map(({ origem, destino, simbolos }) => {
+            {arestas.map(({ origem, destino, rotulos }) => {
               const posOrigem = layout[origem]
               const posDestino = layout[destino]
               if (!posOrigem || !posDestino) return null
 
-              const rotulo = simbolos.join(', ')
+              const rotulo = rotulos.join('\n')
+              const linhas = rotulos.length
 
               if (origem === destino) {
                 const pts = pontosSelfLoop(posOrigem, RAIO)
-                const labelX = posOrigem.x - 14
-                const labelY = posOrigem.y - RAIO * 3.8
+                const lx = posOrigem.x - 45
+                const ly = posOrigem.y - RAIO * 3.2 - linhas * 13 - 5
                 return (
                   <Group key={`aresta-${origem}|${destino}`}>
                     <Arrow
@@ -219,22 +223,24 @@ export default function CanvasAFND({
                       pointerWidth={6}
                     />
                     <Text
-                      x={labelX}
-                      y={labelY}
-                      width={28}
+                      x={lx}
+                      y={ly}
+                      width={90}
                       align="center"
                       text={rotulo}
-                      fontSize={13}
+                      fontSize={11}
                       fill={COR_ARESTA}
                     />
                   </Group>
                 )
               }
 
-              const temDireto = Object.values(afnd.transicoes[origem] ?? {}).flat().includes(destino)
-              const temInverso = Object.values(afnd.transicoes[destino] ?? {}).flat().includes(origem)
+              const temDireto = Object.values(apnd.transicoes[origem] ?? {})
+                .some(res => res.some(r => r.estado === destino))
+              const temInverso = Object.values(apnd.transicoes[destino] ?? {})
+                .some(res => res.some(r => r.estado === origem))
               const bidir = origem !== destino && temDireto && temInverso
-              const outrasPos = afnd.estados
+              const outrasPos = apnd.estados
                 .filter(e => e !== origem && e !== destino)
                 .map(e => layout[e])
                 .filter(Boolean)
@@ -257,12 +263,12 @@ export default function CanvasAFND({
                       pointerWidth={6}
                     />
                     <Text
-                      x={mx - 14}
-                      y={my - 18}
-                      width={28}
+                      x={mx - 45}
+                      y={my + 6}
+                      width={90}
                       align="center"
                       text={rotulo}
-                      fontSize={13}
+                      fontSize={11}
                       fill={COR_ARESTA}
                     />
                   </Group>
@@ -286,12 +292,12 @@ export default function CanvasAFND({
                     pointerWidth={6}
                   />
                   <Text
-                    x={lx - 14}
-                    y={ly - 18}
-                    width={28}
+                    x={lx - 45}
+                    y={ly - 10 - (linhas - 1) * 6}
+                    width={90}
                     align="center"
                     text={rotulo}
-                    fontSize={13}
+                    fontSize={11}
                     fill={COR_ARESTA}
                   />
                 </Group>
@@ -299,14 +305,14 @@ export default function CanvasAFND({
             })}
 
             {/* Estados */}
-            {afnd.estados.map(estado => {
+            {apnd.estados.map(estado => {
               const pos = layout[estado]
               if (!pos) return null
 
               const eAtivo = estadosAtivos.includes(estado)
               const eOrigem = estado === origemTransicao
-              const eFinal = afnd.estadosFinais.includes(estado)
-              const eInicial = estado === afnd.estadoInicial
+              const eFinal = apnd.estadosFinais.includes(estado)
+              const eInicial = estado === apnd.estadoInicial
 
               const corFundo = eAtivo ? COR_ESTADO_ATIVO : eOrigem ? COR_ESTADO_ORIGEM : COR_ESTADO
               const corTexto = eAtivo ? COR_TEXTO_ATIVO : COR_TEXTO_NORMAL

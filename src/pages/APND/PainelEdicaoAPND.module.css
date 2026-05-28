@@ -110,7 +110,6 @@
   margin-top: 0.25rem;
 }
 
-/* Linha com label inline + input pequeno (símbolo inicial da pilha) */
 .linhaSimInicial {
   display: flex;
   align-items: center;

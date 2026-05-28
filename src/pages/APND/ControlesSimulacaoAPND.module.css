@@ -115,7 +115,7 @@
   background: #444;
 }
 
-/* Área inferior: status à esquerda, pilha à direita */
+/* Rodapé: status à esquerda, ramos à direita */
 .rodape {
   display: flex;
   gap: 1.5rem;
@@ -143,11 +143,11 @@
   font-size: 0.85rem;
 }
 
-/* Visualização da pilha em tempo de execução */
-.pilhaWrapper {
+/* Visualização dos ramos ativos */
+.ramosWrapper {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   flex-shrink: 0;
 }
 
@@ -160,6 +160,27 @@
   margin-bottom: 0.3rem;
 }
 
+.ramosColunas {
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-start;
+}
+
+.ramoColuna {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.ramoEstado {
+  font-size: 0.72rem;
+  font-family: monospace;
+  font-weight: 700;
+  color: var(--cor-destaque);
+  margin-bottom: 2px;
+}
+
 .pilhaColuna {
   display: flex;
   flex-direction: column;
@@ -167,20 +188,19 @@
 }
 
 .pilhaCelula {
-  width: 36px;
-  height: 26px;
+  width: 32px;
+  height: 22px;
   display: flex;
   align-items: center;
   justify-content: center;
   border: 1px solid var(--cor-borda);
   border-radius: 3px;
   font-family: monospace;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   background: #fff;
   color: var(--cor-texto);
 }
 
-/* Topo da pilha com destaque visual */
 .pilhaTopo {
   border-color: #2563eb;
   background: #eff6ff;
@@ -192,7 +212,15 @@
   font-size: 0.75rem;
   color: var(--cor-texto-secundario);
   font-style: italic;
-  padding: 0.25rem 0;
+  padding: 0.2rem 0;
+}
+
+.ramoExtra {
+  display: flex;
+  align-items: center;
+  font-size: 0.78rem;
+  color: var(--cor-texto-secundario);
+  padding: 0.2rem 0;
 }
 
 @media (max-width: 640px) {

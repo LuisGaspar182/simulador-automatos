@@ -5,3 +5,30 @@
   overflow: hidden;
   position: relative;
 }
+
+/* Botão de restaurar a vista — fixado no canto inferior direito do canvas */
+.resetView {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  z-index: 2;
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--cor-borda);
+  border-radius: 4px;
+  background: var(--cor-cartao);
+  color: var(--cor-texto);
+  font-size: 1.05rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.7;
+  transition: opacity 0.15s;
+  padding: 0;
+}
+
+.resetView:hover {
+  opacity: 1;
+  background: var(--cor-hover);
+}

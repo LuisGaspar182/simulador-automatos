@@ -5,6 +5,7 @@ import Conteudo from './pages/Conteudo/Conteudo'
 import AFD from './pages/AFD/AFD'
 import AFND from './pages/AFND/AFND'
 import APD from './pages/APD/APD'
+import APND from './pages/APND/APND'
 
 export default function App() {
   return (
@@ -16,8 +17,7 @@ export default function App() {
         <Route path="/afd" element={<AFD />} />
         <Route path="/afnd" element={<AFND />} />
         <Route path="/apd" element={<APD />} />
-        {/* rotas dos simuladores — implementadas nas próximas etapas */}
-        <Route path="/apnd" element={<Navigate to="/simuladores" replace />} />
+        <Route path="/apnd" element={<APND />} />
         <Route path="/turing" element={<Navigate to="/simuladores" replace />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
