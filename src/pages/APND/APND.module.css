@@ -28,7 +28,7 @@
   min-width: 0;
 }
 
-/* Wrapper transparente no desktop */
+/* Wrapper transparente no desktop — apenas garante a semântica de <aside> */
 .painelLateral {
   display: contents;
 }

@@ -1,15 +1,15 @@
 import { useState, useCallback } from 'react'
 import Layout from '../../components/Layout'
-import CanvasAFND from './CanvasAFND'
-import ControlesSimulacao from './ControlesSimulacao'
-import PainelEdicaoAFND from './PainelEdicaoAFND'
-import useSimulacaoAFND from '../../hooks/useSimulacaoAFND'
-import { afndExemplopenultimo1, layoutExemplopenultimo1 } from '../../automata/afnd'
-import styles from './AFND.module.css'
+import CanvasAPND from './CanvasAPND'
+import ControlesSimulacaoAPND from './ControlesSimulacaoAPND'
+import PainelEdicaoAPND from './PainelEdicaoAPND'
+import useSimulacaoAPND from '../../hooks/useSimulacaoAPND'
+import { apndExemploAnBn, layoutExemploAnBn } from '../../automata/apnd'
+import styles from './APND.module.css'
 
-export default function AFND() {
-  const [afnd, setAfnd] = useState(afndExemplopenultimo1)
-  const [layout, setLayout] = useState(layoutExemplopenultimo1)
+export default function APND() {
+  const [apnd, setApnd] = useState(apndExemploAnBn)
+  const [layout, setLayout] = useState(layoutExemploAnBn)
   const [entrada, setEntrada] = useState('')
   const [modo, setModo] = useState('selecionar')
   const [origemTransicao, setOrigemTransicao] = useState(null)
@@ -19,6 +19,7 @@ export default function AFND() {
     passos,
     passoAtual,
     estadosAtivos,
+    ramosAtivos,
     iniciar,
     proximo,
     anterior,
@@ -27,7 +28,7 @@ export default function AFND() {
     pause,
     tocando,
     resultado,
-  } = useSimulacaoAFND(afnd, entrada)
+  } = useSimulacaoAPND(apnd, entrada)
 
   const handleSetModo = useCallback((novoModo) => {
     setModo(novoModo)
@@ -40,15 +41,15 @@ export default function AFND() {
 
   const handleClicarEstado = useCallback((estado) => {
     if (modo === 'removerEstado') {
-      setAfnd(prev => {
+      setApnd(prev => {
         const novosEstados = prev.estados.filter(e => e !== estado)
         const novasTransicoes = {}
         for (const e of novosEstados) {
           if (!prev.transicoes[e]) continue
           const trans = {}
-          for (const [sim, dests] of Object.entries(prev.transicoes[e])) {
-            const filtrado = dests.filter(d => d !== estado)
-            if (filtrado.length > 0) trans[sim] = filtrado
+          for (const [chave, resultados] of Object.entries(prev.transicoes[e])) {
+            const filtrado = resultados.filter(r => r.estado !== estado)
+            if (filtrado.length > 0) trans[chave] = filtrado
           }
           if (Object.keys(trans).length > 0) novasTransicoes[e] = trans
         }
@@ -73,49 +74,82 @@ export default function AFND() {
         setOrigemTransicao(estado)
         return
       }
-      const simbolo = window.prompt(
-        `Símbolo da transição de ${origemTransicao} → ${estado}\nAlfabeto: ${afnd.alfabeto.join(', ')} (ou ε)`
+
+      // Prompt 1: símbolo lido
+      const rawSim = window.prompt(
+        `Transição de ${origemTransicao} → ${estado}\n\nSímbolo lido (do alfabeto ou ε):\nAlfabeto: ${apnd.alfabeto.join(', ')}`
       )
-      if (simbolo === null) {
+      if (rawSim === null) { setOrigemTransicao(null); return }
+      const sim = rawSim.trim()
+      if (sim !== 'ε' && !apnd.alfabeto.includes(sim)) {
+        window.alert(`'${sim}' não está no alfabeto de entrada [${apnd.alfabeto.join(', ')}].`)
         setOrigemTransicao(null)
         return
       }
-      const sim = simbolo.trim()
-      if (sim !== 'ε' && !afnd.alfabeto.includes(sim)) {
-        window.alert(`Símbolo '${sim}' não está no alfabeto [${afnd.alfabeto.join(', ')}].`)
+
+      // Prompt 2: topo da pilha a consumir
+      const rawTopo = window.prompt(
+        `Topo da pilha a consumir:\nAlfabeto da pilha: ${apnd.alfabetoPilha.join(', ')}`
+      )
+      if (rawTopo === null) { setOrigemTransicao(null); return }
+      const topo = rawTopo.trim()
+      if (!apnd.alfabetoPilha.includes(topo)) {
+        window.alert(`'${topo}' não está no alfabeto da pilha [${apnd.alfabetoPilha.join(', ')}].`)
         setOrigemTransicao(null)
         return
       }
-      if (afnd.transicoes[origemTransicao]?.[sim]?.includes(estado)) {
-        window.alert(`Transição de ${origemTransicao} com '${sim}' para ${estado} já existe.`)
+
+      // Prompt 3: o que empilhar
+      const rawEmp = window.prompt(
+        `O que empilhar após desempilhar '${topo}':\n(deixe vazio para apenas desempilhar)\nAlfabeto da pilha: ${apnd.alfabetoPilha.join(', ')}`
+      )
+      if (rawEmp === null) { setOrigemTransicao(null); return }
+      const emp = rawEmp.trim()
+      for (const ch of emp) {
+        if (!apnd.alfabetoPilha.includes(ch)) {
+          window.alert(`'${ch}' não está no alfabeto da pilha [${apnd.alfabetoPilha.join(', ')}].`)
+          setOrigemTransicao(null)
+          return
+        }
+      }
+
+      const chave = sim + ',' + topo
+      const novoResultado = { estado, empilhar: emp }
+
+      // Verifica se essa transição exata (mesmo destino e empilhar) já existe
+      const jaExiste = (apnd.transicoes[origemTransicao]?.[chave] ?? [])
+        .some(r => r.estado === estado && r.empilhar === emp)
+      if (jaExiste) {
+        window.alert(`Essa transição já existe.`)
         setOrigemTransicao(null)
         return
       }
-      setAfnd(prev => ({
+
+      setApnd(prev => ({
         ...prev,
         transicoes: {
           ...prev.transicoes,
           [origemTransicao]: {
             ...(prev.transicoes[origemTransicao] ?? {}),
-            [sim]: [...(prev.transicoes[origemTransicao]?.[sim] ?? []), estado],
+            [chave]: [...(prev.transicoes[origemTransicao]?.[chave] ?? []), novoResultado],
           },
         },
       }))
       setOrigemTransicao(null)
-      return
     }
-  }, [modo, origemTransicao, afnd.alfabeto, afnd.transicoes])
+  }, [modo, origemTransicao, apnd.alfabeto, apnd.alfabetoPilha, apnd.transicoes])
 
   const handleClicarVazio = useCallback((pos) => {
     if (modo === 'adicionarEstado') {
       let idx = 0
-      while (afnd.estados.includes(`q${idx}`)) idx++
+      while (apnd.estados.includes(`q${idx}`)) idx++
       const novoEstado = `q${idx}`
-      const estadoInicial = afnd.estados.length === 0 ? novoEstado : afnd.estadoInicial
-      setAfnd(prev => ({
+      const estadoInicial = apnd.estados.length === 0 ? novoEstado : apnd.estadoInicial
+      setApnd(prev => ({
         ...prev,
         estados: [...prev.estados, novoEstado],
         estadoInicial,
+        transicoes: { ...prev.transicoes, [novoEstado]: {} },
       }))
       setLayout(prev => ({ ...prev, [novoEstado]: { x: pos.x, y: pos.y } }))
       return
@@ -124,26 +158,10 @@ export default function AFND() {
     if (modo === 'adicionarTransicao') {
       setOrigemTransicao(null)
     }
-  }, [modo, afnd])
-
-  const handleRemoverTransicao = useCallback((origem, simbolo) => {
-    setAfnd(prev => {
-      const novasTransicoes = { ...prev.transicoes }
-      if (novasTransicoes[origem]) {
-        const trans = { ...novasTransicoes[origem] }
-        delete trans[simbolo]
-        if (Object.keys(trans).length > 0) {
-          novasTransicoes[origem] = trans
-        } else {
-          delete novasTransicoes[origem]
-        }
-      }
-      return { ...prev, transicoes: novasTransicoes }
-    })
-  }, [])
+  }, [modo, apnd])
 
   const handleDuploCliqueEstado = useCallback((estado) => {
-    setAfnd(prev => {
+    setApnd(prev => {
       const eFinal = prev.estadosFinais.includes(estado)
       return {
         ...prev,
@@ -154,14 +172,32 @@ export default function AFND() {
     })
   }, [])
 
+  const handleRemoverTransicao = useCallback((estadoOrigem, chave, indice) => {
+    setApnd(prev => {
+      const trans = { ...(prev.transicoes[estadoOrigem] ?? {}) }
+      const novaLista = [...(trans[chave] ?? [])]
+      novaLista.splice(indice, 1)
+      if (novaLista.length === 0) {
+        delete trans[chave]
+      } else {
+        trans[chave] = novaLista
+      }
+      return {
+        ...prev,
+        transicoes: { ...prev.transicoes, [estadoOrigem]: trans },
+      }
+    })
+    reset()
+  }, [reset])
+
   return (
     <Layout>
       <div className={styles.pagina}>
-        <h1 className={styles.titulo}>Simulador de AFND</h1>
+        <h1 className={styles.titulo}>Simulador de APND</h1>
         <div className={styles.area}>
           <div className={styles.colunaPrincipal}>
-            <CanvasAFND
-              afnd={afnd}
+            <CanvasAPND
+              apnd={apnd}
               layout={layout}
               estadosAtivos={estadosAtivos}
               modo={modo}
@@ -171,12 +207,13 @@ export default function AFND() {
               onClicarVazio={handleClicarVazio}
               onDuploCliqueEstado={handleDuploCliqueEstado}
             />
-            <ControlesSimulacao
-              afd={afnd}
+            <ControlesSimulacaoAPND
+              apnd={apnd}
               entrada={entrada}
               setEntrada={setEntrada}
               passos={passos}
               passoAtual={passoAtual}
+              ramosAtivos={ramosAtivos}
               resultado={resultado}
               iniciar={iniciar}
               proximo={proximo}
@@ -196,9 +233,9 @@ export default function AFND() {
               <span>{painelVisivel ? '▲' : '▼'}</span>
             </button>
             <div className={styles.painelConteudo}>
-              <PainelEdicaoAFND
-                afnd={afnd}
-                setAfnd={setAfnd}
+              <PainelEdicaoAPND
+                apnd={apnd}
+                setApnd={setApnd}
                 modo={modo}
                 setModo={handleSetModo}
                 layout={layout}
