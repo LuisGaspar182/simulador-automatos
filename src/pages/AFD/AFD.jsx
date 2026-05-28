@@ -16,6 +16,7 @@ export default function AFD() {
   const [entrada, setEntrada] = useState('')
   const [modo, setModo] = useState('selecionar')
   const [origemTransicao, setOrigemTransicao] = useState(null)
+  const [painelVisivel, setPainelVisivel] = useState(false)
 
   const {
     passos,
@@ -129,6 +130,22 @@ export default function AFD() {
     }
   }, [modo, afd])
 
+  const handleRemoverTransicao = useCallback((origem, simbolo) => {
+    setAfd(prev => {
+      const novasTransicoes = { ...prev.transicoes }
+      if (novasTransicoes[origem]) {
+        const trans = { ...novasTransicoes[origem] }
+        delete trans[simbolo]
+        if (Object.keys(trans).length > 0) {
+          novasTransicoes[origem] = trans
+        } else {
+          delete novasTransicoes[origem]
+        }
+      }
+      return { ...prev, transicoes: novasTransicoes }
+    })
+  }, [])
+
   const handleDuploCliqueEstado = useCallback((estado) => {
     setAfd(prev => {
       const eFinal = prev.estadosFinais.includes(estado)
@@ -174,15 +191,27 @@ export default function AFD() {
               tocando={tocando}
             />
           </div>
-          <PainelEdicaoAFD
-            afd={afd}
-            setAfd={setAfd}
-            modo={modo}
-            setModo={handleSetModo}
-            layout={layout}
-            setLayout={setLayout}
-            onResetSimulacao={reset}
-          />
+          <aside className={`${styles.painelLateral} ${painelVisivel ? styles.painelAberto : ''}`}>
+            <button
+              className={styles.togglePainel}
+              onClick={() => setPainelVisivel(v => !v)}
+            >
+              <span>⚙ Editar autômato</span>
+              <span>{painelVisivel ? '▲' : '▼'}</span>
+            </button>
+            <div className={styles.painelConteudo}>
+              <PainelEdicaoAFD
+                afd={afd}
+                setAfd={setAfd}
+                modo={modo}
+                setModo={handleSetModo}
+                layout={layout}
+                setLayout={setLayout}
+                onResetSimulacao={reset}
+                onRemoverTransicao={handleRemoverTransicao}
+              />
+            </div>
+          </aside>
         </div>
       </div>
     </Layout>

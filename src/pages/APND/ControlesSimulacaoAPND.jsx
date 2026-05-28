@@ -34,9 +34,10 @@ export default function ControlesSimulacaoAPND({
     return `${styles.char} ${styles.charNormal}`
   }
 
-  // Ramos a exibir (limita para não sobrecarregar a UI)
   const ramosVisiveis = ramosAtivos.slice(0, MAX_RAMOS_VISIVEIS)
-  const ramosOcultos = ramosAtivos.length - ramosVisiveis.length
+  const ramosExtras = ramosAtivos.length > MAX_RAMOS_VISIVEIS
+    ? ramosAtivos.length - MAX_RAMOS_VISIVEIS
+    : 0
 
   return (
     <div className={styles.painel}>
@@ -48,7 +49,7 @@ export default function ControlesSimulacaoAPND({
           type="text"
           value={entrada}
           onChange={e => setEntrada(e.target.value)}
-          placeholder="ex: ab, aabb..."
+          placeholder="ex: ab, aabb, abba..."
           spellCheck={false}
         />
         {simboloInvalido !== null && (
@@ -118,9 +119,8 @@ export default function ControlesSimulacaoAPND({
         </button>
       </div>
 
-      {/* Status + visualização dos ramos */}
+      {/* Status + visualização dos ramos ativos */}
       <div className={styles.rodape}>
-        {/* Status textual */}
         <div className={styles.statusArea}>
           {!simulando && (
             <span className={styles.status}>Insira uma cadeia e clique em Iniciar.</span>
@@ -129,7 +129,8 @@ export default function ControlesSimulacaoAPND({
             <span className={styles.status}>
               {ramosAtivos.length === 0
                 ? 'Nenhum ramo ativo'
-                : `${ramosAtivos.length} ramo${ramosAtivos.length > 1 ? 's' : ''} ativo${ramosAtivos.length > 1 ? 's' : ''}`}
+                : `${ramosAtivos.length} ramo${ramosAtivos.length > 1 ? 's' : ''} ativo${ramosAtivos.length > 1 ? 's' : ''}`
+              }
             </span>
           )}
           {terminado && resultado === 'aceito' && (
@@ -140,29 +141,24 @@ export default function ControlesSimulacaoAPND({
           )}
         </div>
 
-        {/* Visualização das pilhas dos ramos ativos */}
-        {simulando && ramosAtivos.length > 0 && (
+        {/* Pilhas dos ramos ativos */}
+        {simulando && ramosVisiveis.length > 0 && (
           <div className={styles.ramosWrapper}>
-            <div className={styles.ramosTitulo}>
-              Ramos ativos
-              {ramosOcultos > 0 && (
-                <span className={styles.ramosOcultos}> (+{ramosOcultos})</span>
-              )}
-            </div>
-            <div className={styles.ramosList}>
-              {ramosVisiveis.map((ramo, idx) => {
-                const pilhaExibida = [...ramo.pilha].reverse()
+            <div className={styles.pilhaTitulo}>Ramos ativos</div>
+            <div className={styles.ramosColunas}>
+              {ramosVisiveis.map((ramo, i) => {
+                const pilhaInv = [...ramo.pilha].reverse()
                 return (
-                  <div key={idx} className={styles.ramoItem}>
+                  <div key={i} className={styles.ramoColuna}>
                     <div className={styles.ramoEstado}>{ramo.estado}</div>
                     <div className={styles.pilhaColuna}>
-                      {pilhaExibida.length === 0 ? (
+                      {pilhaInv.length === 0 ? (
                         <div className={styles.pilhaVazia}>∅</div>
                       ) : (
-                        pilhaExibida.map((sym, i) => (
+                        pilhaInv.map((sym, j) => (
                           <div
-                            key={i}
-                            className={`${styles.pilhaCelula} ${i === 0 ? styles.pilhaTopo : ''}`}
+                            key={j}
+                            className={`${styles.pilhaCelula} ${j === 0 ? styles.pilhaTopo : ''}`}
                           >
                             {sym}
                           </div>
@@ -172,6 +168,9 @@ export default function ControlesSimulacaoAPND({
                   </div>
                 )
               })}
+              {ramosExtras > 0 && (
+                <div className={styles.ramoExtra}>+{ramosExtras}</div>
+              )}
             </div>
           </div>
         )}

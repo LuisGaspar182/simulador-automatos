@@ -13,6 +13,7 @@ export default function APND() {
   const [entrada, setEntrada] = useState('')
   const [modo, setModo] = useState('selecionar')
   const [origemTransicao, setOrigemTransicao] = useState(null)
+  const [painelVisivel, setPainelVisivel] = useState(false)
 
   const {
     passos,
@@ -47,7 +48,6 @@ export default function APND() {
           if (!prev.transicoes[e]) continue
           const trans = {}
           for (const [chave, resultados] of Object.entries(prev.transicoes[e])) {
-            // Filtra resultados que apontam para o estado removido
             const filtrado = resultados.filter(r => r.estado !== estado)
             if (filtrado.length > 0) trans[chave] = filtrado
           }
@@ -116,14 +116,11 @@ export default function APND() {
       const chave = sim + ',' + topo
       const novoResultado = { estado, empilhar: emp }
 
-      // No APND, múltiplos resultados para a mesma chave são permitidos
-      // Verifica apenas se o resultado exato já existe (estado + empilhar idênticos)
-      const existentes = apnd.transicoes[origemTransicao]?.[chave] ?? []
-      const jaExiste = existentes.some(r => r.estado === estado && r.empilhar === emp)
+      // Verifica se essa transição exata (mesmo destino e empilhar) já existe
+      const jaExiste = (apnd.transicoes[origemTransicao]?.[chave] ?? [])
+        .some(r => r.estado === estado && r.empilhar === emp)
       if (jaExiste) {
-        window.alert(
-          `A transição δ(${origemTransicao}, ${sim}, ${topo}) = (${estado}, ${emp || 'ε'}) já existe.`
-        )
+        window.alert(`Essa transição já existe.`)
         setOrigemTransicao(null)
         return
       }
@@ -134,10 +131,7 @@ export default function APND() {
           ...prev.transicoes,
           [origemTransicao]: {
             ...(prev.transicoes[origemTransicao] ?? {}),
-            [chave]: [
-              ...(prev.transicoes[origemTransicao]?.[chave] ?? []),
-              novoResultado,
-            ],
+            [chave]: [...(prev.transicoes[origemTransicao]?.[chave] ?? []), novoResultado],
           },
         },
       }))
@@ -178,16 +172,15 @@ export default function APND() {
     })
   }, [])
 
-  // Remove um resultado específico de uma transição (pelo índice no array)
   const handleRemoverTransicao = useCallback((estadoOrigem, chave, indice) => {
     setApnd(prev => {
       const trans = { ...(prev.transicoes[estadoOrigem] ?? {}) }
-      const resultados = [...(trans[chave] ?? [])]
-      resultados.splice(indice, 1)
-      if (resultados.length === 0) {
+      const novaLista = [...(trans[chave] ?? [])]
+      novaLista.splice(indice, 1)
+      if (novaLista.length === 0) {
         delete trans[chave]
       } else {
-        trans[chave] = resultados
+        trans[chave] = novaLista
       }
       return {
         ...prev,
@@ -231,16 +224,27 @@ export default function APND() {
               tocando={tocando}
             />
           </div>
-          <PainelEdicaoAPND
-            apnd={apnd}
-            setApnd={setApnd}
-            modo={modo}
-            setModo={handleSetModo}
-            layout={layout}
-            setLayout={setLayout}
-            onResetSimulacao={reset}
-            onRemoverTransicao={handleRemoverTransicao}
-          />
+          <aside className={`${styles.painelLateral} ${painelVisivel ? styles.painelAberto : ''}`}>
+            <button
+              className={styles.togglePainel}
+              onClick={() => setPainelVisivel(v => !v)}
+            >
+              <span>⚙ Editar autômato</span>
+              <span>{painelVisivel ? '▲' : '▼'}</span>
+            </button>
+            <div className={styles.painelConteudo}>
+              <PainelEdicaoAPND
+                apnd={apnd}
+                setApnd={setApnd}
+                modo={modo}
+                setModo={handleSetModo}
+                layout={layout}
+                setLayout={setLayout}
+                onResetSimulacao={reset}
+                onRemoverTransicao={handleRemoverTransicao}
+              />
+            </div>
+          </aside>
         </div>
       </div>
     </Layout>

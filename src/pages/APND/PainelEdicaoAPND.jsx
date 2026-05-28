@@ -86,15 +86,16 @@ export default function PainelEdicaoAPND({
   for (const [origem, trans] of Object.entries(apnd.transicoes)) {
     for (const [chave, resultados] of Object.entries(trans)) {
       const [simbolo, topo] = chave.split(',')
-      resultados.forEach((resultado, indice) => {
-        const emp = resultado.empilhar === '' ? 'ε' : resultado.empilhar
+      for (let i = 0; i < resultados.length; i++) {
+        const r = resultados[i]
+        const emp = r.empilhar === '' ? 'ε' : r.empilhar
         todasTransicoes.push({
           origem,
           chave,
-          indice,
-          rotulo: `δ(${origem},${simbolo},${topo})=(${resultado.estado},${emp})`,
+          indice: i,
+          rotulo: `δ(${origem},${simbolo},${topo})=(${r.estado},${emp})`,
         })
-      })
+      }
     }
   }
 
@@ -116,7 +117,7 @@ export default function PainelEdicaoAPND({
         </div>
       </div>
 
-      {/* Lista de estados com controles de inicial/final */}
+      {/* Lista de estados */}
       <div className={styles.secao}>
         <div className={styles.secaoTitulo}>Estados</div>
         <div className={styles.listaEstados}>
@@ -221,8 +222,8 @@ export default function PainelEdicaoAPND({
             value={exampleSelecionado}
             onChange={e => setExampleSelecionado(e.target.value)}
           >
-            <option value="anBn">L = aⁿbⁿ (n ≥ 0)</option>
-            <option value="palindromo">L = wwᴿ</option>
+            <option value="anBn">L = aⁿbⁿ (n ≥ 1)</option>
+            <option value="palindromo">L = wwᴿ (palíndromos)</option>
           </select>
           <button className={styles.botaoAcao} onClick={handleCarregarExemplo}>
             Carregar

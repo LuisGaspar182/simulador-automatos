@@ -229,3 +229,9 @@
 .botaoPerigo:hover {
   background: #fee2e2;
 }
+
+@media (max-width: 640px) {
+  .painel {
+    width: 100%;
+  }
+}

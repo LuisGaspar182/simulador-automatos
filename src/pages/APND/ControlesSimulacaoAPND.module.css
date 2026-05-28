@@ -145,51 +145,42 @@
   font-size: 0.85rem;
 }
 
-/* ── Visualização dos ramos ativos ── */
+/* Visualização dos ramos ativos */
 .ramosWrapper {
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  align-items: flex-start;
   flex-shrink: 0;
 }
 
-.ramosTitulo {
+.pilhaTitulo {
   font-size: 0.7rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--cor-texto-secundario);
+  margin-bottom: 0.3rem;
 }
 
-.ramosOcultos {
-  font-weight: 400;
-  font-style: italic;
-}
-
-.ramosList {
+.ramosColunas {
   display: flex;
-  gap: 0.5rem;
+  gap: 0.6rem;
   align-items: flex-start;
 }
 
-/* Um ramo = rótulo do estado + coluna de pilha */
-.ramoItem {
+.ramoColuna {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.2rem;
+  gap: 2px;
 }
 
 .ramoEstado {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-family: monospace;
   font-weight: 700;
-  color: #2563eb;
-  background: #eff6ff;
-  border: 1px solid #bfdbfe;
-  border-radius: 3px;
-  padding: 1px 5px;
-  white-space: nowrap;
+  color: var(--cor-destaque);
+  margin-bottom: 2px;
 }
 
 .pilhaColuna {

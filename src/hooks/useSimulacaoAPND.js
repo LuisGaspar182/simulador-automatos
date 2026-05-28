@@ -59,12 +59,15 @@ export default function useSimulacaoAPND(apnd, entrada) {
     setTocando(false)
   }, [])
 
-  // Ramos ativos no passo atual: array de { estado, pilha }
-  const ramosAtivos =
-    passoAtual >= 0 && passos[passoAtual] ? passos[passoAtual].ramos : []
+  const passoInfo = passoAtual >= 0 ? passos[passoAtual] : null
 
-  // Conjunto de estados ativos (sem repetição, para highlight no canvas)
-  const estadosAtivos = [...new Set(ramosAtivos.map(r => r.estado))]
+  // Lista deduplicada de estados ativos (para destacar no canvas)
+  const estadosAtivos = passoInfo
+    ? [...new Set(passoInfo.ramos.map(r => r.estado))]
+    : []
+
+  // Todos os ramos ativos com estado + pilha
+  const ramosAtivos = passoInfo ? passoInfo.ramos : []
 
   let resultado = 'parado'
   if (passoAtual >= 0 && passos.length > 0) {

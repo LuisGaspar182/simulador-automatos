@@ -13,6 +13,7 @@ export default function APD() {
   const [entrada, setEntrada] = useState('')
   const [modo, setModo] = useState('selecionar')
   const [origemTransicao, setOrigemTransicao] = useState(null)
+  const [painelVisivel, setPainelVisivel] = useState(false)
 
   const {
     passos,
@@ -214,16 +215,27 @@ export default function APD() {
               tocando={tocando}
             />
           </div>
-          <PainelEdicaoAPD
-            apd={apd}
-            setApd={setApd}
-            modo={modo}
-            setModo={handleSetModo}
-            layout={layout}
-            setLayout={setLayout}
-            onResetSimulacao={reset}
-            onRemoverTransicao={handleRemoverTransicao}
-          />
+          <aside className={`${styles.painelLateral} ${painelVisivel ? styles.painelAberto : ''}`}>
+            <button
+              className={styles.togglePainel}
+              onClick={() => setPainelVisivel(v => !v)}
+            >
+              <span>⚙ Editar autômato</span>
+              <span>{painelVisivel ? '▲' : '▼'}</span>
+            </button>
+            <div className={styles.painelConteudo}>
+              <PainelEdicaoAPD
+                apd={apd}
+                setApd={setApd}
+                modo={modo}
+                setModo={handleSetModo}
+                layout={layout}
+                setLayout={setLayout}
+                onResetSimulacao={reset}
+                onRemoverTransicao={handleRemoverTransicao}
+              />
+            </div>
+          </aside>
         </div>
       </div>
     </Layout>
