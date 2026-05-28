@@ -1,4 +1,4 @@
-// Valida se algum símbolo da entrada não está no alfabeto
+// Retorna o primeiro símbolo da entrada que não pertence ao alfabeto, ou null
 export function validarEntrada(apnd, entrada) {
   for (const simbolo of entrada) {
     if (!apnd.alfabeto.includes(simbolo)) return simbolo

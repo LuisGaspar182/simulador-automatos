@@ -1,11 +1,14 @@
 import { useState, useEffect, useCallback } from 'react'
 import { simular } from '../automata/apnd'
 
+// Hook que controla a simulação passo a passo de um APND
+// Retorna 'estadosAtivos' (array de nomes) e 'ramosAtivos' (array de {estado, pilha})
 export default function useSimulacaoAPND(apnd, entrada) {
   const [passos, setPassos] = useState([])
   const [passoAtual, setPassoAtual] = useState(-1)
   const [tocando, setTocando] = useState(false)
 
+  // Avança os passos automaticamente em intervalos enquanto tocando for true
   useEffect(() => {
     if (!tocando) return
     const tamanho = passos.length

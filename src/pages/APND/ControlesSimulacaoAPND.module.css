@@ -120,10 +120,12 @@
   display: flex;
   gap: 1.5rem;
   align-items: flex-start;
+  flex-wrap: wrap;
 }
 
 .statusArea {
   flex: 1;
+  min-width: 140px;
 }
 
 .status {
@@ -189,18 +191,19 @@
 
 .pilhaCelula {
   width: 32px;
-  height: 22px;
+  height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
   border: 1px solid var(--cor-borda);
   border-radius: 3px;
   font-family: monospace;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   background: #fff;
   color: var(--cor-texto);
 }
 
+/* Topo da pilha com destaque visual */
 .pilhaTopo {
   border-color: #2563eb;
   background: #eff6ff;
@@ -212,20 +215,5 @@
   font-size: 0.75rem;
   color: var(--cor-texto-secundario);
   font-style: italic;
-  padding: 0.2rem 0;
-}
-
-.ramoExtra {
-  display: flex;
-  align-items: center;
-  font-size: 0.78rem;
-  color: var(--cor-texto-secundario);
-  padding: 0.2rem 0;
-}
-
-@media (max-width: 640px) {
-  .rodape {
-    flex-direction: column;
-    gap: 0.75rem;
-  }
+  padding: 0.25rem 0;
 }

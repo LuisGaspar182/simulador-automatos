@@ -79,7 +79,9 @@ export default function PainelEdicaoAPND({
     setApnd(prev => ({ ...prev, estadoInicial: estado }))
   }
 
-  // Lista de todas as transições — uma entrada por resultado (não-determinismo)
+  // Monta lista de todas as transições para exibição
+  // No APND: cada (origem, chave) pode ter MÚLTIPLOS resultados → uma linha por resultado
+  // Formato: δ(origem, símbolo, topo) = (destino, empilhar)
   const todasTransicoes = []
   for (const [origem, trans] of Object.entries(apnd.transicoes)) {
     for (const [chave, resultados] of Object.entries(trans)) {
@@ -188,7 +190,7 @@ export default function PainelEdicaoAPND({
         </div>
       </div>
 
-      {/* Lista de transições */}
+      {/* Lista de transições com remoção individual */}
       <div className={styles.secao}>
         <div className={styles.secaoTitulo}>Transições</div>
         <div className={styles.listaTransicoes}>

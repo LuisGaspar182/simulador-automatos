@@ -26,7 +26,8 @@ const CURSORES = {
   removerEstado: 'pointer',
 }
 
-// Agrupa arestas por par (origem, destino) — itera sobre arrays de resultados
+// Agrupa transições por par (origem, destino) e formata rótulos "símbolo,topo/empilhar"
+// No APND: transicoes[origem][chave] é um ARRAY de resultados
 function agruparArestas(apnd) {
   const mapa = {}
   for (const [origem, trans] of Object.entries(apnd.transicoes)) {
@@ -47,7 +48,7 @@ function agruparArestas(apnd) {
 export default function CanvasAPND({
   apnd,
   layout,
-  estadosAtivos,
+  estadosAtivos,   // array de strings (múltiplos estados podem estar ativos)
   modo,
   origemTransicao,
   onMoverEstado,

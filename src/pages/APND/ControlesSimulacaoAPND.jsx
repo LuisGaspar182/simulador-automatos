@@ -1,6 +1,7 @@
 import { validarEntrada } from '../../automata/apnd'
 import styles from './ControlesSimulacaoAPND.module.css'
 
+// Exibe no máximo este número de ramos lado a lado
 const MAX_RAMOS_VISIVEIS = 4
 
 export default function ControlesSimulacaoAPND({
@@ -58,7 +59,7 @@ export default function ControlesSimulacaoAPND({
         )}
       </div>
 
-      {/* Visualização da cadeia */}
+      {/* Visualização da cadeia com destaque no símbolo consumido */}
       <div className={styles.visualizacaoCadeia}>
         {entrada.length === 0 ? (
           <span className={styles.vazio}>ε (cadeia vazia)</span>

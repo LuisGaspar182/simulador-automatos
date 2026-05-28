@@ -75,7 +75,7 @@ export default function APND() {
         return
       }
 
-      // Prompt 1: símbolo lido
+      // Prompt 1: símbolo lido (ou ε)
       const rawSim = window.prompt(
         `Transição de ${origemTransicao} → ${estado}\n\nSímbolo lido (do alfabeto ou ε):\nAlfabeto: ${apnd.alfabeto.join(', ')}`
       )
@@ -99,7 +99,7 @@ export default function APND() {
         return
       }
 
-      // Prompt 3: o que empilhar
+      // Prompt 3: o que empilhar (vazio = só desempilha)
       const rawEmp = window.prompt(
         `O que empilhar após desempilhar '${topo}':\n(deixe vazio para apenas desempilhar)\nAlfabeto da pilha: ${apnd.alfabetoPilha.join(', ')}`
       )
