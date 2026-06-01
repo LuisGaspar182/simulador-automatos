@@ -188,6 +188,7 @@ export default function CanvasAFD({
         width={largura}
         height={altura}
         onClick={handleCliqueStage}
+        onTap={handleCliqueStage}
         onWheel={handleWheel}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
@@ -321,7 +322,9 @@ export default function CanvasAFD({
                   draggable={modo === 'selecionar'}
                   onDragEnd={e => onMoverEstado(estado, { x: e.target.x(), y: e.target.y() })}
                   onClick={e => { e.cancelBubble = true; onClicarEstado(estado) }}
+                  onTap={e => { e.cancelBubble = true; onClicarEstado(estado) }}
                   onDblClick={e => { e.cancelBubble = true; onDuploCliqueEstado(estado) }}
+                  onDblTap={e => { e.cancelBubble = true; onDuploCliqueEstado(estado) }}
                 >
                   <Circle radius={RAIO} fill={corFundo} stroke={COR_BORDA_ESTADO} strokeWidth={2} />
                   {eFinal && (
