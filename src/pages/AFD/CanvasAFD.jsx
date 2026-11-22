@@ -249,6 +249,10 @@ export default function CanvasAFD({
                 const fim = pontoNaBorda(posOrigem, posDestino, RAIO)
                 const mx = (inicio.x + fim.x) / 2
                 const my = (inicio.y + fim.y) / 2
+                const sLen = Math.hypot(fim.x - inicio.x, fim.y - inicio.y)
+                let lpx = sLen > 0 ? (fim.y - inicio.y) / sLen : 0
+                let lpy = sLen > 0 ? -(fim.x - inicio.x) / sLen : -1
+                if (lpy > 0.1) { lpx = -lpx; lpy = -lpy }
                 return (
                   <Group key={`aresta-${origem}|${destino}`}>
                     <Arrow
@@ -260,8 +264,8 @@ export default function CanvasAFD({
                       pointerWidth={6}
                     />
                     <Text
-                      x={mx - 14}
-                      y={my - 18}
+                      x={mx + lpx * 18 - 14}
+                      y={my + lpy * 18 - 7}
                       width={28}
                       align="center"
                       text={rotulo}
@@ -277,6 +281,11 @@ export default function CanvasAFD({
               const fim = pontoNaBorda(cp, posDestino, RAIO)
               const lx = 0.125 * inicio.x + 0.75 * cp.x + 0.125 * fim.x
               const ly = 0.125 * inicio.y + 0.75 * cp.y + 0.125 * fim.y
+              const cMx = (posOrigem.x + posDestino.x) / 2
+              const cMy = (posOrigem.y + posDestino.y) / 2
+              const oud = Math.hypot(cp.x - cMx, cp.y - cMy)
+              const oux = oud > 0 ? (cp.x - cMx) / oud : 0
+              const ouy = oud > 0 ? (cp.y - cMy) / oud : -1
               return (
                 <Group key={`aresta-${origem}|${destino}`}>
                   <Arrow
@@ -289,8 +298,8 @@ export default function CanvasAFD({
                     pointerWidth={6}
                   />
                   <Text
-                    x={lx - 14}
-                    y={ly - 18}
+                    x={lx + oux * 16 - 14}
+                    y={ly + ouy * 16 - 7}
                     width={28}
                     align="center"
                     text={rotulo}

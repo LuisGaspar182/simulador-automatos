@@ -6,6 +6,7 @@ import AFD from './pages/AFD/AFD'
 import AFND from './pages/AFND/AFND'
 import APD from './pages/APD/APD'
 import APND from './pages/APND/APND'
+import MT from './pages/MT/MT'
 
 export default function App() {
   return (
@@ -18,7 +19,7 @@ export default function App() {
         <Route path="/afnd" element={<AFND />} />
         <Route path="/apd" element={<APD />} />
         <Route path="/apnd" element={<APND />} />
-        <Route path="/turing" element={<Navigate to="/simuladores" replace />} />
+        <Route path="/turing" element={<MT />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
